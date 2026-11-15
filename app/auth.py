@@ -11,8 +11,8 @@ import json
 import os
 import secrets
 import time
-from typing import Annotated
 from dataclasses import dataclass
+from typing import Annotated
 
 import jwt
 from fastapi import Depends, HTTPException, status
