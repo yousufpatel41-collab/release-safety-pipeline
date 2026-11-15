@@ -1,0 +1,74 @@
+[
+  {
+    "id": "shared-001",
+    "client": "shared",
+    "title": "Reset a forgotten user password",
+    "text": "Verify the user by callback to the number on file. Reset the password in the admin console, force a change at next sign-in and confirm multi-factor authentication still works."
+  },
+  {
+    "id": "shared-002",
+    "client": "shared",
+    "title": "VPN will not connect",
+    "text": "Check the user's internet access first, then confirm the VPN client version. Restart the VPN client, clear the saved profile and re-import the profile. If it still fails, check the VPN gateway status page."
+  },
+  {
+    "id": "shared-003",
+    "client": "shared",
+    "title": "Linux server disk almost full",
+    "text": "Run df -h to find the full filesystem, then du -sh on the top directories. Rotate or compress old logs, clear package caches and never delete database files. Escalate if usage stays above 90 percent."
+  },
+  {
+    "id": "shared-004",
+    "client": "shared",
+    "title": "TLS certificate about to expire",
+    "text": "List certificates expiring within 30 days. Renew through the certificate authority portal, deploy the new certificate to the load balancer and verify the new expiry date in a browser."
+  },
+  {
+    "id": "shared-005",
+    "client": "shared",
+    "title": "Quarterly backup restore test",
+    "text": "Restore the latest backup into an isolated test host. Compare file counts and a sample of checksums, record the restore time and file any mismatch as an incident."
+  },
+  {
+    "id": "shared-006",
+    "client": "shared",
+    "title": "Onboard a new laptop",
+    "text": "Enrol the device in management, apply the baseline configuration, enable disk encryption and install the standard software. Hand over with a checklist signed by the user."
+  },
+  {
+    "id": "shared-007",
+    "client": "shared",
+    "title": "Printer shows offline",
+    "text": "Check power and network cable, print a test page from the printer panel, then remove and re-add the printer queue on the affected computer."
+  },
+  {
+    "id": "shared-008",
+    "client": "shared",
+    "title": "Monthly patch window",
+    "text": "Patch on the second Tuesday of each month after a snapshot. Apply updates to a pilot group first, wait two days, then roll out to everyone and keep the snapshot for one week."
+  },
+  {
+    "id": "acme-001",
+    "client": "acme",
+    "title": "Acme project room access",
+    "text": "Acme project room access is granted by the Acme engagement manager. Raise a ticket tagged ACME-ROOM and attach the manager's written approval before adding anyone to the room group."
+  },
+  {
+    "id": "acme-002",
+    "client": "acme",
+    "title": "Acme data export handling",
+    "text": "Acme data exports must be encrypted and shared only through the Acme secure folder. Delete local copies after upload and log the deletion in the Acme ticket."
+  },
+  {
+    "id": "globex-001",
+    "client": "globex",
+    "title": "Globex negotiation workspace access",
+    "text": "Globex negotiation workspace access needs approval from the Globex engagement lead. Raise a ticket tagged GLOBEX-WORKSPACE and keep the approval in the ticket."
+  },
+  {
+    "id": "globex-002",
+    "client": "globex",
+    "title": "Globex pricing model files",
+    "text": "Globex pricing model files stay in the Globex restricted share. Never email them, and review the share permissions every month."
+  }
+]
