@@ -22,5 +22,5 @@ if [ "$CURRENT" != "$GOOD" ]; then
   exit 1
 fi
 scripts/check_healthz.sh http://localhost:8000/healthz 10
-docker compose down
+docker compose --env-file .env.demo down
 echo "rollback drill passed: broken release $BROKEN was rejected, $GOOD restored"
