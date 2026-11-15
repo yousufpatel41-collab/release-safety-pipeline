@@ -11,6 +11,7 @@ import json
 import os
 import secrets
 import time
+from typing import Annotated
 from dataclasses import dataclass
 
 import jwt
@@ -98,7 +99,7 @@ def issue_token(req: LoginRequest) -> dict:
 
 
 def require_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(BEARER),
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(BEARER)],
 ) -> Principal:
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise HTTPException(status_code=401, detail="Authentication required",

@@ -3,7 +3,6 @@ import logging
 import os
 
 import jwt
-import pytest
 
 from app import main
 from app.auth import hash_password, verify_password

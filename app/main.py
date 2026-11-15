@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+from typing import Annotated
 
 from fastapi import Depends, FastAPI, Request, Response
 from pydantic import BaseModel, Field
@@ -56,7 +57,7 @@ def token(request: LoginRequest):
 
 
 @app.post("/ask")
-def ask(request: AskRequest, principal: Principal = Depends(require_user)):
+def ask(request: AskRequest, principal: Annotated[Principal, Depends(require_user)]):
     hit = retriever.search(request.question, principal.tenant)
     method = hit.method if hit else "none"
     RETRIEVAL_TOTAL.labels("found" if hit else "not_found", method).inc()

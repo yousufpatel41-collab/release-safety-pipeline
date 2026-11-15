@@ -41,9 +41,8 @@ python scripts/generate_demo_env.py
 Save the **demo password shown once** in the terminal. Then load `.env.demo` into the shell and run:
 
 ```bash
-# Linux/macOS only (for Windows see Docker option below)
-set -a; . ./.env.demo; set +a
-uvicorn app.main:app --reload
+# Cross-platform: securely load local .env.demo, then start Uvicorn
+python scripts/run_local.py
 ```
 
 Open `http://127.0.0.1:8000/docs` to see interactive OpenAPI docs. The API is local-only by default in this example.
