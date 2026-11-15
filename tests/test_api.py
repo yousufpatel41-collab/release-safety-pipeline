@@ -33,7 +33,9 @@ def test_answer_cites_a_source(client, acme_auth):
 
 
 def test_refuses_out_of_corpus_questions(client, acme_auth):
-    body = client.post("/ask", json={"question": "best pizza topping in Naples"}, headers=acme_auth).json()
+    body = client.post(
+        "/ask", json={"question": "best pizza topping in Naples"}, headers=acme_auth
+    ).json()
     assert body["found"] is False
     assert body["answer"] == NOT_FOUND
     assert body["source"] is None
@@ -44,8 +46,14 @@ def test_no_access_without_token(client):
 
 
 def test_bogus_token_rejected(client):
-    assert client.post("/ask", json={"question": "VPN will not connect"},
-                       headers={"Authorization": "Bearer forged.token.signature"}).status_code == 401
+    assert (
+        client.post(
+            "/ask",
+            json={"question": "VPN will not connect"},
+            headers={"Authorization": "Bearer forged.token.signature"},
+        ).status_code
+        == 401
+    )
 
 
 def test_invalid_password_rejected(client):
@@ -54,16 +62,30 @@ def test_invalid_password_rejected(client):
 
 
 def test_unknown_user_rejected(client):
-    assert client.post("/auth/token", json={"username": "notreal", "password": "bad"}).status_code == 401
+    assert (
+        client.post("/auth/token", json={"username": "notreal", "password": "bad"}).status_code
+        == 401
+    )
 
 
 def test_expired_token_rejected(client, monkeypatch):
     # Invalid exp even with a valid signature.
-    token = jwt.encode({"sub": "alice", "tenant": "acme", "iss": "release-safety-runbook",
-                        "aud": "runbook-api", "exp": 1}, os.environ["AUTH_JWT_SECRET"],
-                       algorithm="HS256")
-    r = client.post("/ask", json={"question": "VPN will not connect"},
-                    headers={"Authorization": f"Bearer {token}"})
+    token = jwt.encode(
+        {
+            "sub": "alice",
+            "tenant": "acme",
+            "iss": "release-safety-runbook",
+            "aud": "runbook-api",
+            "exp": 1,
+        },
+        os.environ["AUTH_JWT_SECRET"],
+        algorithm="HS256",
+    )
+    r = client.post(
+        "/ask",
+        json={"question": "VPN will not connect"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
     assert r.status_code == 401
 
 
@@ -71,8 +93,11 @@ def test_token_tenant_claim_cannot_be_forged(client, acme_auth):
     original = acme_auth["Authorization"].split()[1]
     header, payload, signature = original.split(".")
     # Substituting the audience/tenant invalidates the signature.
-    r = client.post("/ask", json={"question": "Globex pricing model"},
-                    headers={"Authorization": f"Bearer {header}.{payload[:-1]}A.{signature}"})
+    r = client.post(
+        "/ask",
+        json={"question": "Globex pricing model"},
+        headers={"Authorization": f"Bearer {header}.{payload[:-1]}A.{signature}"},
+    )
     assert r.status_code == 401
 
 
@@ -87,8 +112,11 @@ def test_cross_tenant_runbooks_not_accessible(client, acme_auth, globex_auth):
 
 
 def test_cannot_choose_client_in_request_body(client, acme_auth):
-    r = client.post("/ask", json={"question": "Globex pricing model files", "client": "globex"},
-                    headers=acme_auth)
+    r = client.post(
+        "/ask",
+        json={"question": "Globex pricing model files", "client": "globex"},
+        headers=acme_auth,
+    )
     assert r.status_code == 200
     assert r.json()["source"] != "globex-002"
 
@@ -99,7 +127,10 @@ def test_short_question_rejected(client, acme_auth):
 
 
 def test_get_ask_not_supported(client):
-    assert client.get("/ask", params={"client": "globex", "question": "Globex pricing"}).status_code == 405
+    assert (
+        client.get("/ask", params={"client": "globex", "question": "Globex pricing"}).status_code
+        == 405
+    )
 
 
 def test_password_hash_uses_salt():
@@ -110,12 +141,17 @@ def test_password_hash_uses_salt():
 
 
 def test_redact_removes_email_and_iban():
-    assert redact("mail anna@example.com about DE89 3704 0044 0532 0130 00") == "mail [email] about [iban]"
+    assert (
+        redact("mail anna@example.com about DE89 3704 0044 0532 0130 00")
+        == "mail [email] about [iban]"
+    )
 
 
 def test_logs_do_not_contain_personal_data(client, acme_auth, caplog):
     with caplog.at_level(logging.INFO, logger="runbook"):
-        client.post("/ask", json={"question": "reset password for anna@example.com"}, headers=acme_auth)
+        client.post(
+            "/ask", json={"question": "reset password for anna@example.com"}, headers=acme_auth
+        )
     assert "anna@example.com" not in caplog.text
     assert "Bearer" not in caplog.text
 
@@ -128,6 +164,7 @@ def test_metrics_requires_token(client):
 def test_metrics_expose_prometheus_counters(client, acme_auth, monkeypatch):
     client.post("/ask", json={"question": "VPN will not connect"}, headers=acme_auth)
     import os
+
     r = client.get("/metrics", headers={"Authorization": f"Bearer {os.environ['METRICS_TOKEN']}"})
     assert r.status_code == 200
     assert "runbook_http_requests_total" in r.text

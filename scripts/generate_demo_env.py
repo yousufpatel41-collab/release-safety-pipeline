@@ -1,4 +1,5 @@
 """Generate untracked local demo credentials; never put real passwords in Git."""
+
 import argparse
 import json
 import secrets
@@ -19,10 +20,18 @@ env_file = Path(args.output)
 if env_file.exists():
     raise SystemExit(f"Refusing to overwrite {env_file}")
 env_file.write_text(
-    "AUTH_JWT_SECRET=" + secrets.token_urlsafe(48) + "\n"
-    + "RUNBOOK_USERS_JSON=" + json.dumps(users, separators=(",", ":")) + "\n"
-    + "METRICS_TOKEN=" + metrics_token + "\n"
-    + "GRAFANA_ADMIN_PASSWORD=" + secrets.token_urlsafe(24) + "\n"
+    "AUTH_JWT_SECRET="
+    + secrets.token_urlsafe(48)
+    + "\n"
+    + "RUNBOOK_USERS_JSON="
+    + json.dumps(users, separators=(",", ":"))
+    + "\n"
+    + "METRICS_TOKEN="
+    + metrics_token
+    + "\n"
+    + "GRAFANA_ADMIN_PASSWORD="
+    + secrets.token_urlsafe(24)
+    + "\n"
 )
 env_file.chmod(0o600)
 metrics_file = env_file.with_name(".metrics-token")

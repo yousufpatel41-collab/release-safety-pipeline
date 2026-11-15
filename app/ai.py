@@ -25,9 +25,7 @@ class HybridRetriever:
         self.index = index
         self.vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True)
         self._all = index.chunks
-        self._embeddings = self.vectorizer.fit_transform(
-            [f"{c.title} {c.text}" for c in self._all]
-        )
+        self._embeddings = self.vectorizer.fit_transform([f"{c.title} {c.text}" for c in self._all])
 
     def search(self, question: str, tenant: str) -> Retrieval | None:
         allowed = [(i, c) for i, c in enumerate(self._all) if c.client in (tenant, "shared")]

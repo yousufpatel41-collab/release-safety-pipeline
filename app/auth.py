@@ -91,9 +91,16 @@ def issue_token(req: LoginRequest) -> dict:
         raise HTTPException(status_code=403, detail="Account is not assigned to a tenant")
     now = int(time.time())
     token = jwt.encode(
-        {"sub": req.username, "tenant": tenant, "iss": ISSUER, "aud": AUDIENCE,
-         "iat": now, "exp": now + 15 * 60},
-        _secret(), algorithm="HS256",
+        {
+            "sub": req.username,
+            "tenant": tenant,
+            "iss": ISSUER,
+            "aud": AUDIENCE,
+            "iat": now,
+            "exp": now + 15 * 60,
+        },
+        _secret(),
+        algorithm="HS256",
     )
     return {"access_token": token, "token_type": "bearer", "expires_in": 900}
 
@@ -102,20 +109,33 @@ def require_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(BEARER)],
 ) -> Principal:
     if credentials is None or credentials.scheme.lower() != "bearer":
-        raise HTTPException(status_code=401, detail="Authentication required",
-                            headers={"WWW-Authenticate": "Bearer"})
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     try:
         claims = jwt.decode(
-            credentials.credentials, _secret(), algorithms=["HS256"],
-            audience=AUDIENCE, issuer=ISSUER, options={"require": ["exp", "sub", "tenant", "iss", "aud"]},
+            credentials.credentials,
+            _secret(),
+            algorithms=["HS256"],
+            audience=AUDIENCE,
+            issuer=ISSUER,
+            options={"require": ["exp", "sub", "tenant", "iss", "aud"]},
         )
     except jwt.PyJWTError as exc:
-        raise HTTPException(status_code=401, detail="Invalid or expired token",
-                            headers={"WWW-Authenticate": "Bearer"}) from exc
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
     username, tenant = claims.get("sub"), claims.get("tenant")
     account = _users().get(username)
     # Recheck trusted directory: revoking a user or changing tenant takes effect immediately.
-    if (not isinstance(account, dict) or not isinstance(tenant, str)
-            or not hmac.compare_digest(str(account.get("tenant", "")), tenant)):
+    if (
+        not isinstance(account, dict)
+        or not isinstance(tenant, str)
+        or not hmac.compare_digest(str(account.get("tenant", "")), tenant)
+    ):
         raise HTTPException(status_code=401, detail="Account revoked or changed")
     return Principal(username=username, tenant=tenant)

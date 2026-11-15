@@ -15,6 +15,10 @@ GOLDEN = [
 
 @pytest.mark.parametrize(("tenant", "user", "password", "question", "expected"), GOLDEN)
 def test_golden_answers(client, tenant, user, password, question, expected):
-    token = client.post("/auth/token", json={"username": user, "password": password}).json()["access_token"]
-    r = client.post("/ask", json={"question": question}, headers={"Authorization": f"Bearer {token}"})
+    token = client.post("/auth/token", json={"username": user, "password": password}).json()[
+        "access_token"
+    ]
+    r = client.post(
+        "/ask", json={"question": question}, headers={"Authorization": f"Bearer {token}"}
+    )
     assert r.json()["source"] == expected

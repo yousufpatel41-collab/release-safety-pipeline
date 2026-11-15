@@ -62,12 +62,12 @@ def ask(request: AskRequest, principal: Annotated[Principal, Depends(require_use
     method = hit.method if hit else "none"
     RETRIEVAL_TOTAL.labels("found" if hit else "not_found", method).inc()
     # Never log whole raw request, bearer token, tenant or unredacted question.
-    logger.info(json.dumps({"event": "ask", "source": hit.chunk.id if hit else None,
-                            "method": method}))
+    logger.info(
+        json.dumps({"event": "ask", "source": hit.chunk.id if hit else None, "method": method})
+    )
     if hit is None:
         return {"found": False, "answer": NOT_FOUND, "source": None, "method": None}
-    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id,
-            "method": hit.method}
+    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id, "method": hit.method}
 
 
 @app.get("/metrics")
