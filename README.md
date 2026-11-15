@@ -2,7 +2,7 @@
 
 A small Python service whose real purpose is to show how releases get **tested, gated, deployed and rolled back automatically**. The service is a runbook assistant: it answers IT-support questions from a set of *synthetic* runbooks, always cites its source, and refuses when it does not know.
 
-**Status: work in progress.** The code, tests and scripts below exist and run locally. The GitHub Actions pipeline has not run on GitHub yet, and the container build, deploy and rollback scripts have not been run end to end. The results table further down is empty on purpose until they are.
+**Status: GitHub Actions CI validated.** The [successful CI run](https://github.com/yousufpatel41-collab/release-safety-pipeline/actions/runs/43771846624) passed lint, 23 automated tests, dependency audit, secret scan, Docker container smoke test, and an automated rollback drill on a temporary GitHub-hosted runner. This is **not** a production deployment or validation on a persistent server. The injected-bug drill table below remains incomplete until separate pull-request experiments are performed.
 
 ## Why this exists
 
@@ -18,7 +18,7 @@ All data in `data/runbooks.json` is invented. No real client, employer or person
 | `GET /version` | Reports the commit SHA the image was built from |
 | `GET /ask?question=...&client=...` | Returns the best matching runbook text and its source id, or "Not found in the runbooks" |
 
-Retrieval is plain BM25 keyword search (no LLM, no API key, no cost). Each runbook chunk carries a `client` tag. The search index restricts retrieval to chunks tagged with the requested client and `shared` ones, and corpus statistics are computed over visible chunks only. **Security limitation:** the demo API accepts `client` as an unauthenticated query parameter, so a caller can impersonate another client. This is a retrieval-isolation demonstration, **not secure production multi-tenancy**. A production implementation must authenticate callers and derive the permitted client ID from a trusted authorization layer. Questions are redacted for e-mail addresses and IBANs before they are logged.
+Retrieval is plain BM25 keyword search (no LLM or paid model API; hosting and compute can still cost money). Each runbook chunk carries a `client` tag. The search index restricts retrieval to chunks tagged with the requested client and `shared` ones, and corpus statistics are computed over visible chunks only. **Security limitation:** the demo API accepts `client` as an unauthenticated query parameter, so a caller can impersonate another client. This is a retrieval-isolation demonstration, **not secure production multi-tenancy**. A production implementation must authenticate callers and derive the permitted client ID from a trusted authorization layer. Questions are redacted for e-mail addresses and IBANs before they are logged.
 
 An LLM answer step is a possible next phase. It is not built.
 
@@ -52,7 +52,7 @@ scripts/smoke_test.sh
 
 ## Results of the injected-bug drill
 
-To be filled in after running the pipeline on GitHub. Plan: introduce each bug on a branch, open a pull request, and record which stage caught it.
+The initial GitHub Actions CI and runner-hosted rollback drill passed. Separate injected-bug pull-request experiments have **not** been performed. Plan: introduce each bug on a branch, open a pull request, and record which stage caught it.
 
 | Injected bug | Stage that should catch it | Caught by | Evidence |
 |---|---|---|---|
