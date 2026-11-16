@@ -4,10 +4,10 @@ set -euo pipefail
 BASE="${1:-http://localhost:8000}"
 "$(dirname "$0")/check_healthz.sh" "$BASE/healthz"
 curl -fsS "$BASE/version" | grep -q '"version"'
-[ -n "${TEST_DEMO_PASSWORD:-}" ] || { echo "Set TEST_DEMO_PASSWORD for demo user" >&2; exit 1; }
+[ -n "${DEMO_AUTH_VALUE:-}" ] || { echo "Set DEMO_AUTH_VALUE for demo user" >&2; exit 1; }
 
 TOKEN=$(curl -fsS -X POST "$BASE/auth/token" -H 'Content-Type: application/json' \
-    -d "$(python -c 'import json,os; print(json.dumps({"username":"demo","password":os.environ["TEST_DEMO_PASSWORD"]}))')" \
+    -d "$(python -c 'import json,os; print(json.dumps({"username":"demo","password":os.environ["DEMO_AUTH_VALUE"]}))')" \
     | python -c 'import json,sys; print(json.load(sys.stdin)["access_token"])')
 
 # Missing authentication must be rejected.
