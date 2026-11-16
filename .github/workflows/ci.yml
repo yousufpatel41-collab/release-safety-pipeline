@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: "3.13"
-      - run: pip install PyJWT==2.13.0 fastapi==0.162.0
+      - run: pip install PyJWT==2.15.0 fastapi==0.162.0
       - name: Create throwaway CI-only credentials
         run: python scripts/generate_demo_env.py --password ci-smoke-only
       - name: Build tagged image
@@ -65,7 +65,7 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: "3.13"
-      - run: pip install PyJWT==2.13.0 fastapi==0.162.0
+      - run: pip install PyJWT==2.15.0 fastapi==0.162.0
       - name: Create throwaway CI-only credentials
         run: python scripts/generate_demo_env.py --password ci-smoke-only
       - name: Build healthy and deliberately broken versions
