@@ -62,8 +62,9 @@ def test_invalid_password_rejected(client):
 
 
 def test_unknown_user_rejected(client):
+    bad_value = "bad"
     assert (
-        client.post("/auth/token", json={"username": "notreal", "password": "bad"}).status_code
+        client.post("/auth/token", json={"username": "notreal", "password": bad_value}).status_code
         == 401
     )
 
