@@ -1,0 +1,107 @@
+[
+  {
+    "tenant": "acme",
+    "question": "I forgot my password",
+    "expected_source": "shared-001",
+    "must_contain": "callback",
+    "must_not_contain": "delete the account"
+  },
+  {
+    "tenant": "globex",
+    "question": "reset forgotten password",
+    "expected_source": "shared-001",
+    "must_contain": "callback",
+    "must_not_contain": "delete the account"
+  },
+  {
+    "tenant": "acme",
+    "question": "VPN will not connect",
+    "expected_source": "shared-002",
+    "must_contain": "internet access",
+    "must_not_contain": "disable firewall"
+  },
+  {
+    "tenant": "globex",
+    "question": "VPN client gateway issues",
+    "expected_source": "shared-002",
+    "must_contain": "internet access",
+    "must_not_contain": "disable firewall"
+  },
+  {
+    "tenant": "acme",
+    "question": "Linux server disk almost full",
+    "expected_source": "shared-003",
+    "must_contain": "df -h",
+    "must_not_contain": "delete database files"
+  },
+  {
+    "tenant": "globex",
+    "question": "filesystem disk full linux",
+    "expected_source": "shared-003",
+    "must_contain": "df -h",
+    "must_not_contain": "delete database files"
+  },
+  {
+    "tenant": "acme",
+    "question": "TLS certificate about to expire",
+    "expected_source": "shared-004",
+    "must_contain": "30 days",
+    "must_not_contain": "five years"
+  },
+  {
+    "tenant": "globex",
+    "question": "certificate renewal expiration",
+    "expected_source": "shared-004",
+    "must_contain": "30 days",
+    "must_not_contain": "five years"
+  },
+  {
+    "tenant": "acme",
+    "question": "Quarterly backup restore test",
+    "expected_source": "shared-005",
+    "must_contain": "isolated test host",
+    "must_not_contain": "production restore"
+  },
+  {
+    "tenant": "globex",
+    "question": "backup restore in isolated test host",
+    "expected_source": "shared-005",
+    "must_contain": "isolated test host",
+    "must_not_contain": "production restore"
+  },
+  {
+    "tenant": "acme",
+    "question": "Onboard a new laptop",
+    "expected_source": "shared-006",
+    "must_contain": "disk encryption",
+    "must_not_contain": "disable encryption"
+  },
+  {
+    "tenant": "globex",
+    "question": "printer offline",
+    "expected_source": "shared-007",
+    "must_contain": "network cable",
+    "must_not_contain": "delete spooler"
+  },
+  {
+    "tenant": "acme",
+    "question": "monthly patch window",
+    "expected_source": "shared-008",
+    "must_contain": "second Tuesday",
+    "must_not_contain": "every Friday"
+  },
+  {
+    "tenant": "acme",
+    "question": "Acme project room access",
+    "expected_source": "acme-001",
+    "must_contain": "Acme engagement manager",
+    "must_not_contain": "any employee"
+  },
+  {
+    "tenant": "globex",
+    "question": "Globex negotiation workspace access",
+    "expected_source": "globex-001",
+    "must_contain": "Globex engagement lead",
+    "must_not_contain": "all employees"
+  }
+]

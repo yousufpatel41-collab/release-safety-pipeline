@@ -2,7 +2,7 @@
   "title": "Runbook Service Health",
   "uid": "runbook-health",
   "schemaVersion": 41,
-  "version": 1,
+  "version": 2,
   "refresh": "15s",
   "timezone": "browser",
   "time": {
@@ -117,6 +117,50 @@
           "refId": "A",
           "expr": "rate(runbook_auth_failures_total[5m])",
           "legendFormat": "{{method}} {{route}} {{status}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Possible duplicate flags / second",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (flagged) (rate(similar_requests_total[5m]))",
+          "legendFormat": "{{flagged}} {{mode}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Grounded answers by mode / second",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (mode) (rate(llm_requests_total[5m]))",
+          "legendFormat": "{{flagged}} {{mode}}"
         }
       ]
     }

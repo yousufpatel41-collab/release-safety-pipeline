@@ -10,8 +10,13 @@ from fastapi import Depends, FastAPI, Request, Response
 from pydantic import BaseModel, Field
 
 from .ai import HybridRetriever
+from .duplicates import DuplicateFinder, load_tickets
+from .llm_answer import generate_grounded
 from .auth import LoginRequest, Principal, issue_token, require_user
-from .monitoring import RETRIEVAL_TOTAL, measure_requests, metrics_response
+from .monitoring import (
+    LLM_CHECK_FAILURES, LLM_REQUESTS, RETRIEVAL_TOTAL, SIMILAR_REQUESTS,
+    measure_requests, metrics_response,
+)
 from .search import Index, load_chunks
 
 VERSION = os.getenv("APP_VERSION", "dev")
@@ -24,6 +29,7 @@ app = FastAPI(title="Release-Safety Runbook Assistant", version="2.0")
 app.middleware("http")(measure_requests)
 index = Index(load_chunks())
 retriever = HybridRetriever(index)
+duplicate_finder = DuplicateFinder(load_tickets())
 
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 IBAN = re.compile(r"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){3,7}(?: ?[A-Z0-9]{1,4})?\b")
@@ -32,6 +38,10 @@ NOT_FOUND = "Not found in the runbooks. Please contact the IT team."
 
 class AskRequest(BaseModel):
     question: str = Field(min_length=3, max_length=300)
+
+
+class SimilarTicketRequest(BaseModel):
+    ticket: str = Field(min_length=3, max_length=1000)
 
 
 def redact(text: str) -> str:
@@ -62,14 +72,43 @@ def ask(request: AskRequest, principal: Annotated[Principal, Depends(require_use
     method = hit.method if hit else "none"
     RETRIEVAL_TOTAL.labels("found" if hit else "not_found", method).inc()
     # Never log whole raw request, bearer token, tenant or unredacted question.
-    logger.info(
-        json.dumps({"event": "ask", "source": hit.chunk.id if hit else None, "method": method})
-    )
+    logger.info(json.dumps({"event": "ask", "source": hit.chunk.id if hit else None,
+                            "method": method}))
     if hit is None:
         return {"found": False, "answer": NOT_FOUND, "source": None, "method": None}
-    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id, "method": hit.method}
+    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id,
+            "method": hit.method}
 
 
 @app.get("/metrics")
 def metrics(request: Request):
     return metrics_response(request)
+
+
+@app.post("/tickets/similar")
+def similar_tickets(
+    request: SimilarTicketRequest, principal: Annotated[Principal, Depends(require_user)],
+):
+    result = duplicate_finder.find(request.ticket, principal.tenant)
+    SIMILAR_REQUESTS.labels(str(result["possible_duplicate"]).lower()).inc()
+    logger.info(json.dumps({"event": "tickets_similar",
+                            "match_count": len(result["matches"]),
+                            "best_score": result["matches"][0]["score"] if result["matches"] else 0}))
+    return result
+
+
+@app.post("/ask/answer")
+def ask_answer(request: AskRequest, principal: Annotated[Principal, Depends(require_user)]):
+    hit = retriever.search(request.question, principal.tenant)
+    if hit is None:
+        # Never call a model for unknown questions.
+        LLM_REQUESTS.labels("not_found").inc()
+        return {"found": False, "answer": NOT_FOUND, "source": None, "mode": "extractive"}
+    result = generate_grounded(redact(request.question), hit.chunk)
+    LLM_REQUESTS.labels(result.mode).inc()
+    if result.check not in ("pass", "disabled"):
+        LLM_CHECK_FAILURES.inc()
+    logger.info(json.dumps({"event": "ask_answer", "source": hit.chunk.id,
+                            "mode": result.mode, "check": result.check}))
+    return {"found": True, "answer": result.answer, "source": result.source,
+            "mode": result.mode}
