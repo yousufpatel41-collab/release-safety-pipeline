@@ -47,7 +47,7 @@ jobs:
         run: docker build --build-arg APP_VERSION=${{ github.sha }} -t runbook-assistant:${{ github.sha }} .
       - name: Start container and verify authentication + search
         env:
-          TEST_DEMO_PASSWORD: ci-smoke-only
+          DEMO_AUTH_VALUE: ci-smoke-only
         run: |
           docker run -d --name smoke --env-file .env.demo -p 127.0.0.1:8000:8000 runbook-assistant:${{ github.sha }}
           scripts/smoke_test.sh
@@ -76,7 +76,7 @@ jobs:
         run: scripts/rollback_drill.sh ${{ github.sha }} ${{ github.sha }}-broken
       - name: Deploy and smoke-test runner-hosted staging
         env:
-          TEST_DEMO_PASSWORD: ci-smoke-only
+          DEMO_AUTH_VALUE: ci-smoke-only
         run: |
           scripts/deploy.sh ${{ github.sha }}
           scripts/smoke_test.sh
