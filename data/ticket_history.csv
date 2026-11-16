@@ -1,0 +1,41 @@
+ticket_id,tenant,text,created
+A-101,acme,VPN disconnects repeatedly after connecting to company gateway,2026-06-01
+A-102,acme,Corporate VPN tunnel drops every few minutes during remote work,2026-06-02
+A-103,acme,Linux application server root partition nearly full disk usage warning,2026-06-03
+A-104,acme,Disk space low on Linux application VM logs consume filesystem,2026-06-04
+A-105,acme,TLS certificate for web portal expires this week renewal needed,2026-06-05
+A-106,acme,Web portal SSL certificate nearing expiration warning,2026-06-06
+A-107,acme,Forgotten employee password cannot sign in to staff account,2026-06-07
+A-108,acme,Staff member locked out after forgetting their login password,2026-06-08
+A-109,acme,Office WiFi clients lose wireless connection in meeting room,2026-06-09
+A-110,acme,Meeting room wireless network disconnects laptops unexpectedly,2026-06-10
+A-111,acme,Printer tray jam blocks printing requests,2026-06-11
+A-112,acme,Monthly backup restore rehearsal scheduled,2026-06-12
+A-113,acme,User requests license assignment for design tool,2026-06-13
+A-114,acme,Conference room projector has no video signal,2026-06-14
+A-115,acme,Mobile phone enrollment stuck on loading screen,2026-06-15
+A-116,acme,New laptop encryption compliance check pending,2026-06-16
+A-117,acme,Calendar invite attachment fails to open,2026-06-17
+A-118,acme,Customer portal text layout distorted on mobile,2026-06-18
+A-119,acme,Git repository access denied to developer,2026-06-19
+A-120,acme,File share permission audit required,2026-06-20
+G-201,globex,Invoice transfer to ERP times out at gateway with HTTP 504,2026-06-01
+G-202,globex,Gateway timeout 504 when posting invoice to SAP ERP,2026-06-02
+G-203,globex,Corporate VPN fails on home office connection,2026-06-03
+G-204,globex,VPN session drops immediately after sign in from home,2026-06-04
+G-205,globex,Software license allocation report exceeds assigned seats,2026-06-05
+G-206,globex,Purchased software seats do not match license assignments,2026-06-06
+G-207,globex,Invoice amount incorrectly extracted from scanned document,2026-06-07
+G-208,globex,Scanned vendor invoice shows wrong extracted total,2026-06-08
+G-209,globex,Database connection pool exhausted causing API requests to fail,2026-06-09
+G-210,globex,API cannot connect to database due to exhausted connection pool,2026-06-10
+G-211,globex,Project workspace requires manager approval,2026-06-11
+G-212,globex,Purchase order number missing on document import,2026-06-12
+G-213,globex,Laptop battery fails unexpectedly,2026-06-13
+G-214,globex,Archive retrieval job runs slower than expected,2026-06-14
+G-215,globex,Support team cannot access knowledge base portal,2026-06-15
+G-216,globex,MFA reset request received from staff member,2026-06-16
+G-217,globex,Email notification is delayed for new document,2026-06-17
+G-218,globex,Contract retention period requires review,2026-06-18
+G-219,globex,Windows patch installation fails on one laptop,2026-06-19
+G-220,globex,Customer cannot export monthly reconciliation summary,2026-06-20

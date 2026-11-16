@@ -12,6 +12,7 @@ from app.main import app
 def client(monkeypatch):
     monkeypatch.setenv("AUTH_JWT_SECRET", secrets.token_urlsafe(48))
     monkeypatch.setenv("METRICS_TOKEN", secrets.token_urlsafe(32))
+    monkeypatch.setenv("LLM_ENABLED", "0")
     monkeypatch.setenv(
         "RUNBOOK_USERS_JSON",
         json.dumps(

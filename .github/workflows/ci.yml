@@ -25,6 +25,11 @@ jobs:
           ruff format --check .
       - name: Unit, auth, tenant-isolation, ML and golden tests
         run: pytest -q
+      - name: Offline duplicate and answer evaluations
+        run: |
+          python -m eval.run_duplicates_eval
+          python -m eval.run_answers_eval
+          git diff --exit-code -- docs/duplicates_results.md
       - name: Dependency audit
         run: pip-audit -r requirements.txt
       - name: Secret scan

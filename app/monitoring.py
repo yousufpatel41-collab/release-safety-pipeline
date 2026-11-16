@@ -18,6 +18,9 @@ HTTP_DURATION = Histogram(
 )
 RETRIEVAL_TOTAL = Counter("runbook_retrieval_total", "Search outcomes", ["outcome", "method"])
 AUTH_FAILURES = Counter("runbook_auth_failures_total", "Authentication failures")
+LLM_REQUESTS = Counter("llm_requests_total", "Model answer outcomes", ["mode"])
+LLM_CHECK_FAILURES = Counter("llm_check_failures_total", "Failed model answer validations")
+SIMILAR_REQUESTS = Counter("similar_requests_total", "Similarity requests", ["flagged"])
 
 
 async def measure_requests(request: Request, call_next):

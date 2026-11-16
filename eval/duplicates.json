@@ -1,0 +1,192 @@
+{
+  "calibration": [
+    {
+      "tenant": "acme",
+      "text": "Our VPN gateway connection keeps dropping unexpectedly",
+      "duplicate": true,
+      "incident_group": "vpn_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Remote worker VPN tunnel frequently disconnects",
+      "duplicate": true,
+      "incident_group": "vpn_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Root filesystem almost full on Linux server",
+      "duplicate": true,
+      "incident_group": "disk_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Application VM disk full because of logs",
+      "duplicate": true,
+      "incident_group": "disk_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Portal certificate about to expire and needs renewal",
+      "duplicate": true,
+      "incident_group": "cert_a"
+    },
+    {
+      "tenant": "globex",
+      "text": "SAP invoice posting returns gateway timeout 504",
+      "duplicate": true,
+      "incident_group": "erp_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Invoice transfers to ERP report HTTP 504 error",
+      "duplicate": true,
+      "incident_group": "erp_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Office home VPN drops right after logging in",
+      "duplicate": true,
+      "incident_group": "vpn_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "VPN keeps failing from staff home office",
+      "duplicate": true,
+      "incident_group": "vpn_g"
+    },
+    {
+      "tenant": "acme",
+      "text": "Can the team create a new salary band structure?",
+      "duplicate": false,
+      "incident_group": "new_policy_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "How do we stop invoice fraud with AI?",
+      "duplicate": false,
+      "incident_group": "new_ai_a"
+    },
+    {
+      "tenant": "globex",
+      "text": "Please enable a new expense approval workflow",
+      "duplicate": false,
+      "incident_group": "new_workflow_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Company tax planning strategy review requested",
+      "duplicate": false,
+      "incident_group": "new_tax_g"
+    },
+    {
+      "tenant": "acme",
+      "text": "Yearly cybersecurity budget needs committee approval",
+      "duplicate": false,
+      "incident_group": "new_budget_a"
+    },
+    {
+      "tenant": "globex",
+      "text": "Where is the new marketing campaign landing page?",
+      "duplicate": false,
+      "incident_group": "new_marketing_g"
+    }
+  ],
+  "test": [
+    {
+      "tenant": "acme",
+      "text": "Employee forgot account sign in password",
+      "duplicate": true,
+      "incident_group": "password_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Staff password lost and unable to login",
+      "duplicate": true,
+      "incident_group": "password_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Wireless network in the meeting room drops repeatedly",
+      "duplicate": true,
+      "incident_group": "wifi_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Meeting room laptops lose connection to office WiFi",
+      "duplicate": true,
+      "incident_group": "wifi_a"
+    },
+    {
+      "tenant": "globex",
+      "text": "We purchased fewer licenses than seats currently assigned",
+      "duplicate": true,
+      "incident_group": "lic_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Software license usage exceeds available purchased seats",
+      "duplicate": true,
+      "incident_group": "lic_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Scanned invoice extracted wrong amount from document",
+      "duplicate": true,
+      "incident_group": "extract_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Vendor invoice OCR shows an incorrect total",
+      "duplicate": true,
+      "incident_group": "extract_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "API database pool is exhausted and connections fail",
+      "duplicate": true,
+      "incident_group": "db_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "DB connection pool exhaustion breaks service calls",
+      "duplicate": true,
+      "incident_group": "db_g"
+    },
+    {
+      "tenant": "acme",
+      "text": "Need a new guide for contractor travel reimbursement",
+      "duplicate": false,
+      "incident_group": "new_travel_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Quarterly sales territory planning needs input",
+      "duplicate": false,
+      "incident_group": "new_sales_a"
+    },
+    {
+      "tenant": "acme",
+      "text": "Need to change payroll tax withholding rules",
+      "duplicate": false,
+      "incident_group": "new_tax_a"
+    },
+    {
+      "tenant": "globex",
+      "text": "Need to create a new customer satisfaction survey",
+      "duplicate": false,
+      "incident_group": "new_survey_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Develop annual recruitment strategy and hiring plan",
+      "duplicate": false,
+      "incident_group": "new_hiring_g"
+    },
+    {
+      "tenant": "globex",
+      "text": "Write board meeting summary for capital investment",
+      "duplicate": false,
+      "incident_group": "new_capex_g"
+    }
+  ]
+}
