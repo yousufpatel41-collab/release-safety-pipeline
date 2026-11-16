@@ -28,3 +28,22 @@ def test_client_cannot_retrieve_other_clients_chunks():
             continue
         hit = index.search(f"{other.title} {other.text}", "acme")
         assert hit is None or hit[0].client in ("acme", SHARED)
+
+
+def test_hybrid_tenant_isolation():
+    from app.ai import HybridRetriever
+
+    retriever = HybridRetriever(index)
+    for item in index.chunks:
+        if item.client != "globex":
+            continue
+        hit = retriever.search(item.title + " " + item.text, "acme")
+        assert hit is None or hit.chunk.client in ("acme", "shared")
+
+
+def test_hybrid_typo_tolerance():
+    from app.ai import HybridRetriever
+
+    retriever = HybridRetriever(index)
+    hit = retriever.search("VPN clent cannot conect gatewy", "acme")
+    assert hit is not None and hit.chunk.id == "shared-002"

@@ -10,10 +10,12 @@ STATE_DIR=".deploy"
 STATE_FILE="$STATE_DIR/current_tag"
 HEALTH_URL="${HEALTH_URL:-http://localhost:8000/healthz}"
 mkdir -p "$STATE_DIR"
+COMPOSE=(docker compose --env-file .env.demo)
+[ -f .env.demo ] || { echo "Missing .env.demo; run generate_demo_env.py" >&2; exit 1; }
 PREV_TAG="$(cat "$STATE_FILE" 2>/dev/null || true)"
 
 echo "Deploying $NEW_TAG (previous: ${PREV_TAG:-none})"
-IMAGE_TAG="$NEW_TAG" docker compose up -d --no-build
+IMAGE_TAG="$NEW_TAG" "${COMPOSE[@]}" up -d --no-build
 
 if scripts/check_healthz.sh "$HEALTH_URL" 15; then
   echo "$NEW_TAG" > "$STATE_FILE"
@@ -22,14 +24,14 @@ if scripts/check_healthz.sh "$HEALTH_URL" 15; then
 fi
 
 echo "Health check failed for $NEW_TAG" >&2
-docker compose logs --tail 30 assistant >&2 || true
+"${COMPOSE[@]}" logs --tail 30 assistant >&2 || true
 if [ -n "$PREV_TAG" ]; then
   echo "Rolling back to $PREV_TAG" >&2
-  IMAGE_TAG="$PREV_TAG" docker compose up -d --no-build
+  IMAGE_TAG="$PREV_TAG" "${COMPOSE[@]}" up -d --no-build
   scripts/check_healthz.sh "$HEALTH_URL" 15
   echo "Rolled back to $PREV_TAG" >&2
 else
   echo "No previous tag to roll back to; stopping the service" >&2
-  docker compose down
+  "${COMPOSE[@]}" down
 fi
 exit 1

@@ -3,5 +3,35 @@ services:
     image: runbook-assistant:${IMAGE_TAG:-dev}
     container_name: runbook-assistant
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - path: .env.demo
+        format: raw
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    profiles: [observability]
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ./.metrics-token:/etc/prometheus/metrics-token:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on: [assistant]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.3.1
+    profiles: [observability]
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?Supply Grafana password via --env-file .env.demo}
+    volumes:
+      - ./monitoring/grafana-datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./monitoring/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboard.yml:ro
+      - ./monitoring/dashboard.json:/var/lib/grafana/dashboards/runbook.json:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on: [prometheus]
     restart: unless-stopped

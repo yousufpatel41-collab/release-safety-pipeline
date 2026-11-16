@@ -1,5 +1,4 @@
 name: ci
-
 on:
   pull_request:
   push:
@@ -9,23 +8,22 @@ on:
 permissions:
   contents: read
 
-# Every third-party action is pinned to a full commit SHA (supply-chain safety; see README).
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: "3.13"
           cache: pip
           cache-dependency-path: requirements-dev.txt
       - run: pip install -r requirements-dev.txt
-      - name: Lint
+      - name: Lint and format
         run: |
           ruff check .
           ruff format --check .
-      - name: Unit, golden and access-control tests
+      - name: Unit, auth, tenant-isolation, ML and golden tests
         run: pytest -q
       - name: Dependency audit
         run: pip-audit -r requirements.txt
@@ -38,34 +36,47 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Build image tagged with the commit SHA
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: "3.13"
+      - run: pip install PyJWT==2.15.0 fastapi==0.162.0
+      - name: Create throwaway CI-only credentials
+        run: python scripts/generate_demo_env.py --password ci-smoke-only
+      - name: Build tagged image
         run: docker build --build-arg APP_VERSION=${{ github.sha }} -t runbook-assistant:${{ github.sha }} .
-      - name: Start container and smoke test it
+      - name: Start container and verify authentication + search
+        env:
+          DEMO_AUTH_VALUE: ci-smoke-only
         run: |
-          docker run -d --name smoke -p 8000:8000 runbook-assistant:${{ github.sha }}
+          docker run -d --name smoke --env-file .env.demo -p 127.0.0.1:8000:8000 runbook-assistant:${{ github.sha }}
           scripts/smoke_test.sh
-      - name: Show container logs on failure
+      - name: Container logs on failure
         if: failure()
         run: docker logs smoke
 
   deploy:
-    # Runs on merge to main. Add required reviewers to the "staging" environment to gate it
-    # (available on the free plan for public repositories).
     needs: container-smoke
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Build the release and a deliberately broken twin
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: "3.13"
+      - run: pip install PyJWT==2.15.0 fastapi==0.162.0
+      - name: Create throwaway CI-only credentials
+        run: python scripts/generate_demo_env.py --password ci-smoke-only
+      - name: Build healthy and deliberately broken versions
         run: |
           docker build --build-arg APP_VERSION=${{ github.sha }} -t runbook-assistant:${{ github.sha }} .
-          docker build --build-arg APP_VERSION=${{ github.sha }}-broken --build-arg BREAK_HEALTH=1 \
-            -t runbook-assistant:${{ github.sha }}-broken .
-      - name: Rollback drill (broken release must be rejected and the good one restored)
+          docker build --build-arg APP_VERSION=${{ github.sha }}-broken --build-arg BREAK_HEALTH=1 -t runbook-assistant:${{ github.sha }}-broken .
+      - name: Rollback drill on temporary CI runner
         run: scripts/rollback_drill.sh ${{ github.sha }} ${{ github.sha }}-broken
-      - name: Deploy this release to the runner-hosted staging target
+      - name: Deploy and smoke-test runner-hosted staging
+        env:
+          DEMO_AUTH_VALUE: ci-smoke-only
         run: |
           scripts/deploy.sh ${{ github.sha }}
           scripts/smoke_test.sh

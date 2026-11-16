@@ -1,0 +1,9 @@
+apiVersion: 1
+providers:
+  - name: Runbook dashboards
+    orgId: 1
+    folder: Runbook
+    type: file
+    disableDeletion: false
+    options:
+      path: /var/lib/grafana/dashboards
