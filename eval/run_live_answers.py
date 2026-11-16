@@ -22,7 +22,9 @@ def main():
     parser.add_argument("--execute", action="store_true", help="Actually call external provider")
     args = parser.parse_args()
     if not args.execute:
-        raise SystemExit("Not calling a provider. Specify --execute and explicit environment opt-in.")
+        raise SystemExit(
+            "Not calling a provider. Specify --execute and explicit environment opt-in."
+        )
     if os.getenv("LLM_ENABLED") != "1" or os.getenv("LLM_EXTERNAL_APPROVED") != "1":
         raise SystemExit("Set LLM_ENABLED=1 and LLM_EXTERNAL_APPROVED=1 after data review.")
     import json

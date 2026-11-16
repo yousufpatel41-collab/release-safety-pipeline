@@ -39,9 +39,9 @@ def run() -> dict:
 
 def main():
     result = run()
-    print(f'Offline FakeLLM checks: {result["passed"]}/{result["cases"]}')
+    print(f"Offline FakeLLM checks: {result['passed']}/{result['cases']}")
     for question, issue in result["failures"]:
-        print(f'- {question!r}: {issue}')
+        print(f"- {question!r}: {issue}")
     if result["failures"]:
         raise SystemExit(1)
 

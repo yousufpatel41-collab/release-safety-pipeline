@@ -33,7 +33,8 @@ def test_similarity_has_max_three_results(client, acme_auth):
 
 def test_unrelated_ticket_not_flagged(client, acme_auth):
     response = client.post(
-        "/tickets/similar", json={"ticket": "New contractor travel reimbursement policy"},
+        "/tickets/similar",
+        json={"ticket": "New contractor travel reimbursement policy"},
         headers=acme_auth,
     )
     assert response.status_code == 200
@@ -70,15 +71,18 @@ def test_ticket_body_never_appears_in_application_logs(client, acme_auth, caplog
 def test_empty_history_returns_empty_results():
     finder = DuplicateFinder([])
     assert finder.find("VPN tunnel drops frequently", "acme") == {
-        "matches": [], "possible_duplicate": False
+        "matches": [],
+        "possible_duplicate": False,
     }
 
 
 def test_other_tenant_text_does_not_enter_tfidf_index():
-    finder = DuplicateFinder([
-        Ticket("A-1", "acme", "printer offline", "2026-01-01"),
-        Ticket("G-1", "globex", "invoice gateway timeout", "2026-01-01"),
-    ])
+    finder = DuplicateFinder(
+        [
+            Ticket("A-1", "acme", "printer offline", "2026-01-01"),
+            Ticket("G-1", "globex", "invoice gateway timeout", "2026-01-01"),
+        ]
+    )
     assert finder.find("invoice gateway timeout", "acme")["possible_duplicate"] is False
 
 
@@ -105,4 +109,6 @@ def test_calibration_and_heldout_groups_are_disjoint():
 
 
 def test_malformed_short_ticket_returns_422(client, acme_auth):
-    assert client.post("/tickets/similar", json={"ticket": ""}, headers=acme_auth).status_code == 422
+    assert (
+        client.post("/tickets/similar", json={"ticket": ""}, headers=acme_auth).status_code == 422
+    )

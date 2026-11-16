@@ -11,7 +11,9 @@ HTTP_REQUESTS = Counter(
     "runbook_http_requests_total", "HTTP requests", ["method", "route", "status"]
 )
 HTTP_DURATION = Histogram(
-    "runbook_http_request_duration_seconds", "HTTP request duration", ["method", "route"],
+    "runbook_http_request_duration_seconds",
+    "HTTP request duration",
+    ["method", "route"],
     buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2, 5),
 )
 RETRIEVAL_TOTAL = Counter("runbook_retrieval_total", "Search outcomes", ["outcome", "method"])

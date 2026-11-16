@@ -46,12 +46,12 @@ class DuplicateFinder:
         self.threshold = threshold
         self._tenants: dict[str, tuple[list[Ticket], TfidfVectorizer, object]] = {}
         for tenant in sorted({ticket.tenant for ticket in tickets}):
-            visible = [ticket for ticket in tickets if ticket.tenant == tenant and ticket.text.strip()]
+            visible = [
+                ticket for ticket in tickets if ticket.tenant == tenant and ticket.text.strip()
+            ]
             if not visible:
                 continue
-            vectorizer = TfidfVectorizer(
-                analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True
-            )
+            vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), sublinear_tf=True)
             matrix = vectorizer.fit_transform([ticket.text for ticket in visible])
             self._tenants[tenant] = (visible, vectorizer, matrix)
 
@@ -62,7 +62,9 @@ class DuplicateFinder:
         tickets, vectorizer, matrix = entry
         similarities = cosine_similarity(vectorizer.transform([ticket_text]), matrix)[0]
         # Stable ordering for equal scores makes tests reproducible.
-        ranked = sorted(range(len(tickets)), key=lambda pos: (-similarities[pos], tickets[pos].ticket_id))
+        ranked = sorted(
+            range(len(tickets)), key=lambda pos: (-similarities[pos], tickets[pos].ticket_id)
+        )
         matches = [
             {"ticket_id": tickets[i].ticket_id, "score": round(float(similarities[i]), 4)}
             for i in ranked[:limit]

@@ -10,12 +10,16 @@ from fastapi import Depends, FastAPI, Request, Response
 from pydantic import BaseModel, Field
 
 from .ai import HybridRetriever
+from .auth import LoginRequest, Principal, issue_token, require_user
 from .duplicates import DuplicateFinder, load_tickets
 from .llm_answer import generate_grounded
-from .auth import LoginRequest, Principal, issue_token, require_user
 from .monitoring import (
-    LLM_CHECK_FAILURES, LLM_REQUESTS, RETRIEVAL_TOTAL, SIMILAR_REQUESTS,
-    measure_requests, metrics_response,
+    LLM_CHECK_FAILURES,
+    LLM_REQUESTS,
+    RETRIEVAL_TOTAL,
+    SIMILAR_REQUESTS,
+    measure_requests,
+    metrics_response,
 )
 from .search import Index, load_chunks
 
@@ -72,12 +76,12 @@ def ask(request: AskRequest, principal: Annotated[Principal, Depends(require_use
     method = hit.method if hit else "none"
     RETRIEVAL_TOTAL.labels("found" if hit else "not_found", method).inc()
     # Never log whole raw request, bearer token, tenant or unredacted question.
-    logger.info(json.dumps({"event": "ask", "source": hit.chunk.id if hit else None,
-                            "method": method}))
+    logger.info(
+        json.dumps({"event": "ask", "source": hit.chunk.id if hit else None, "method": method})
+    )
     if hit is None:
         return {"found": False, "answer": NOT_FOUND, "source": None, "method": None}
-    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id,
-            "method": hit.method}
+    return {"found": True, "answer": hit.chunk.text, "source": hit.chunk.id, "method": hit.method}
 
 
 @app.get("/metrics")
@@ -87,13 +91,20 @@ def metrics(request: Request):
 
 @app.post("/tickets/similar")
 def similar_tickets(
-    request: SimilarTicketRequest, principal: Annotated[Principal, Depends(require_user)],
+    request: SimilarTicketRequest,
+    principal: Annotated[Principal, Depends(require_user)],
 ):
     result = duplicate_finder.find(request.ticket, principal.tenant)
     SIMILAR_REQUESTS.labels(str(result["possible_duplicate"]).lower()).inc()
-    logger.info(json.dumps({"event": "tickets_similar",
-                            "match_count": len(result["matches"]),
-                            "best_score": result["matches"][0]["score"] if result["matches"] else 0}))
+    logger.info(
+        json.dumps(
+            {
+                "event": "tickets_similar",
+                "match_count": len(result["matches"]),
+                "best_score": result["matches"][0]["score"] if result["matches"] else 0,
+            }
+        )
+    )
     return result
 
 
@@ -108,7 +119,14 @@ def ask_answer(request: AskRequest, principal: Annotated[Principal, Depends(requ
     LLM_REQUESTS.labels(result.mode).inc()
     if result.check not in ("pass", "disabled"):
         LLM_CHECK_FAILURES.inc()
-    logger.info(json.dumps({"event": "ask_answer", "source": hit.chunk.id,
-                            "mode": result.mode, "check": result.check}))
-    return {"found": True, "answer": result.answer, "source": result.source,
-            "mode": result.mode}
+    logger.info(
+        json.dumps(
+            {
+                "event": "ask_answer",
+                "source": hit.chunk.id,
+                "mode": result.mode,
+                "check": result.check,
+            }
+        )
+    )
+    return {"found": True, "answer": result.answer, "source": result.source, "mode": result.mode}
