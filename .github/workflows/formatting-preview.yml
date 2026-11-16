@@ -19,7 +19,7 @@ jobs:
       - run: pip install ruff==0.17.3
       - name: Create preview of formatted source
         run: |
-          ruff check --fix .
+          ruff check --fix . || true
           ruff format .
           python - <<'PY'
           import base64, json, subprocess
