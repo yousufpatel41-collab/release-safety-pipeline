@@ -64,8 +64,10 @@ def main() -> None:
     lines = [
         "# Duplicate-ticket evaluation",
         "",
-        "Synthetic data only. These scores do **not** estimate real incident deduplication quality.",
-        "The threshold was selected using only calibration cases; test cases are incident-group-disjoint.",
+        "Synthetic data only. These scores do **not** estimate " 
+        "real incident deduplication quality.",
+        "The threshold was selected using only calibration cases; " 
+        "test cases are incident-group-disjoint.",
         "Ticket history is a fixed unsupervised retrieval index, not labelled training data.",
         "",
         f"Calibration questions: {sum(cal[k] for k in ('tp', 'fp', 'tn', 'fn'))}; "
