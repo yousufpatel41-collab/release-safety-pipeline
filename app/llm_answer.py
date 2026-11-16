@@ -75,7 +75,7 @@ class HostedChatLLM:
                 {
                     "role": "system",
                     "content": (
-                        "You select relevant source sentences. Return up to two complete " 
+                        "You select relevant source sentences. Return up to two complete "
                         "verbatim "
                         "sentences from the supplied runbook, each followed by [SOURCE_ID]. "
                         "Never add, alter, summarize, or infer any facts. "
